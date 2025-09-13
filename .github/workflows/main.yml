@@ -16,11 +16,11 @@ jobs:
     steps:
       # الخطوة 1: تنزيل نسخة من الكود إلى الكمبيوتر المؤقت
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # الخطوة 2: تثبيت برنامج Java (ضروري لبناء تطبيقات أندرويد)
+      # الخطوة 2: تثبيت برنامج Java (ضروري لبناء تطبيقات أندrocytes)
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -45,7 +45,7 @@ jobs:
 
       # الخطوة 5: رفع ملف سجل البناء (سواء نجح أو فشل)
       - name: Upload Build Log Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-log
           path: build_log.txt
@@ -53,7 +53,7 @@ jobs:
       # الخطوة 6: رفع ملف الـ APK (فقط في حالة النجاح)
       - name: Upload APK Artifact on Success
         if: env.BUILD_STATUS == 'success'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: release-apk
           path: app/build/outputs/apk/debug/app-debug.apk
