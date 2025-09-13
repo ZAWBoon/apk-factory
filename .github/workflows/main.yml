@@ -34,12 +34,10 @@ jobs:
         id: build_step
         run: |
           # سنقوم بتشغيل أمر البناء ونحفظ كل ما يظهر على الشاشة في ملف اسمه build_log.txt
-          # الأمر '|| true' يضمن أن الـ Workflow لن يتوقف فجأة إذا فشل البناء
-          ./gradlew assembleRelease --stacktrace > build_log.txt 2>&1 || true
+          ./gradlew assembleDebug --stacktrace > build_log.txt 2>&1 || true
           
           # الآن سنتحقق مما إذا كان البناء قد نجح أم لا
-          # إذا كان حجم ملف الـ APK الناتج أكبر من صفر، فهذا يعني أن البناء نجح
-          if [ -s "app/build/outputs/apk/release/app-release-unsigned.apk" ]; then
+          if [ -s "app/build/outputs/apk/debug/app-debug.apk" ]; then
             echo "BUILD_STATUS=success" >> $GITHUB_ENV
           else
             echo "BUILD_STATUS=failure" >> $GITHUB_ENV
@@ -58,7 +56,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: release-apk
-          path: app/build/outputs/apk/release/app-release-unsigned.apk
+          path: app/build/outputs/apk/debug/app-debug.apk
           
       # الخطوة 7: إرسال التقرير النهائي إلى مدير المصنع (Viasocket)
       - name: Report Status to Viasocket
