@@ -62,5 +62,13 @@ jobs:
           
       # الخطوة 7: إرسال التقرير النهائي إلى مدير المصنع (Viasocket)
       - name: Report Status to Viasocket
-        run: echo "This step will be configured later with the Viasocket webhook"
-        # سنضيف أمر curl الحقيقي هنا بعد أن نجهز Viasocket
+        run: |
+          curl -X POST ${{ secrets.VIASOCKET_REPORTER_WEBHOOK }} \
+          -H "Content-Type: application/json" \
+          -d '{
+                "build_status": "${{ env.BUILD_STATUS }}",
+                "repo_name": "${{ github.repository }}",
+                "branch": "${{ github.ref_name }}",
+                "commit_sha": "${{ github.sha }}",
+                "run_id": ${{ github.run_id }}
+              }'
