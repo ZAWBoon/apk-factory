@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-upload:
+  build-and-report:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -23,22 +23,31 @@ jobs:
 
       - name: Build with Gradle
         id: build_step
+        # سنسمح لهذه الخطوة بالاستمرار حتى لو فشلت، لكي نتمكن من إرسال التقرير
+        continue-on-error: true
         run: ./gradlew assembleDebug
 
-      - name: Upload APK
+      - name: Upload APK on Success
+        # هذا الشرط سيتحقق من النتيجة النهائية لخطوة البناء
+        if: steps.build_step.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: final-apk
           path: app/build/outputs/apk/debug/app-debug.apk
-          
+
       - name: Send Report to Viasocket
-        # هذه الخطوة ستعمل دائمًا بعد الخطوات السابقة
-        if: always()
+        if: always() # هذه الخطوة ستعمل دائمًا
         run: |
+          # نحدد الحالة بناءً على نتيجة خطوة البناء
+          BUILD_STATUS="failure"
+          if [[ ${{ steps.build_step.outcome }} == 'success' ]]; then
+            BUILD_STATUS="success"
+          fi
+
           curl -X POST ${{ secrets.VIASOCKET_REPORTER_WEBHOOK }} \
           -H "Content-Type: application/json" \
           -d '{
-                "build_status": "${{ job.status }}",
+                "build_status": "'"$BUILD_STATUS"'",
                 "repo_name": "${{ github.repository }}",
                 "branch": "${{ github.ref_name }}",
                 "commit_sha": "${{ github.sha }}",
