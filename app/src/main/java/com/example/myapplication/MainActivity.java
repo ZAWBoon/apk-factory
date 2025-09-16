@@ -10,7 +10,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextView textView = findViewById(R.id.text_view);
+        TextView textView = findViewById(R.id.myTextView);
         textView.setText("Hello, World!");
     }
 }
